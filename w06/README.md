@@ -22,7 +22,53 @@
 
 > ... JSONP를 사용하는 방법이다. XHR과 달리 브라우저의 동일 도메인 정책의 제약을 받지 않는다. 따라서, 서드파티 사이트에서 데이터를 로딩할 수 있으므로 보안 측면에서의 영향을 고려하여 신중하게 사용해야 한다. -p.227
 
-- 모던 브라우저에선 `CORS`가 `JSONP`, `Image Beacons`와 같은 방법들을 대체
+- `JSONP`, `Image Beacons`와 같은 방법들은 모던 브라우저에선 `CORS`로 대체됨
+
+```
+/get-user-jsonp?callback=fn
+
+
+fn({
+ user: 1
+});
+```
+
+// SOP(동일출처원칙)
+// XHR 요청하면 SOP에 걸림
+// img, css, js file 요청들은 SOP에 안 걸림
+// jsonp, image beacon은 이 원리를 활용한 방법
+
+
+- 쓰기: 일반적으로 허용한다. 일부 HTTP요청은 preflight가 필요하다
+(CORS에서 등장하는 preflight)
+    - 링크, 리다이렉트, 폼 제출
+    - `<a>`
+    - `<form>` 으로 다른 origin에 데이터를 쓰는 작업
+- 임베딩: 일반적으로 허용한다.
+    - `<script src="..."></script>`
+    - `<link rel="stylesheet" href="…">`
+    - `<img>`, `<video>`, `<audio>`, `<object>`, `<embed>`
+    - `@font-face`
+    - `<iframe>`
+- 읽기: 일반적으로 허용하지 않는다.
+    - 보통 js 코드로 접근하는 행위들이 해당된다.
+    - js로 iframe내의 document에 접근
+    - js로 canvas내에 다른 origin의 이미지를 불러오는 작업
+    - js로 다른 리소스를 fetch하는 작업
+
+
+// CORS
+// access-control-* 헤더를 보고 브라우저가 응답을 허용하는 매커니즘
+
+// GET 요청이 아닌 요청? 리소스를 변경할 수 있는 요청?
+// preflight request
+// OPTIONS 메서드 사용 -> 요청 전에 먼저 허용되는 지 체크
+// option 메서드는 캐싱
+//`Access-Control-Max-Age`는 preflight 요청의 결과를 캐시할 기간을 결정하는 헤더 요청입니다.
+
+
+[단순 요청](https://developer.mozilla.org/ko/docs/Web/HTTP/CORS#%EB%8B%A8%EC%88%9C_%EC%9A%94%EC%B2%ADsimple_requests)
+
 
 ### 8.6 자바스크립트 배포
 
